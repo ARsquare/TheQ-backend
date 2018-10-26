@@ -8,11 +8,14 @@ from django.http import HttpResponse , JsonResponse
 def savetheevent(request):
     #print (request.body)
     data = json.loads(request.body)
-    event_name = data["name"]
-    event_date = datetime.datetime.strptime(data["date"],"%d%m%Y").date()
+    event_name = data["event_name"]
+    event_profile_image = data["event_profile_image"]
+    event_cover_image = data["event_cover_image"]
+    event_date_start = datetime.datetime.strptime(data["date_start"],"%d%m%Y").date()
+    event_date_end = datetime.datetime.strptime(data["date_end"],"%d%m%Y").date()
     event_description = data["description"]
     event_city = data["city"]
-    EventData.objects.create(name=event_name, date=event_date, description=event_description, city=event_city)
+    EventData.objects.create(event_name=event_name, event_profile_image=event_profile_image, event_cover_image=event_cover_image, date_start=event_date_start, date_end=event_date_end, description=event_description, city=event_city)
     return HttpResponse("Event successfully saved!")
 
 @csrf_exempt
@@ -25,5 +28,18 @@ def showeventdetails(request):
     return HttpResponse("Wrong request!")
 
 
-def deleteevent(request):
-    return HttpResponse("Event successfully saved!")
+def deleteevent(request, id):
+    if request.method == 'DELETE':
+        data = json.loads(request.body)
+        EventData.objects.get(event_id=id).delete()
+    return HttpResponse("Event successfully removed!")
+
+
+@csrf_exempt
+def registertheuser(request):
+    data = json.loads(request.body)
+    user_name = data["user_name"]
+    user_profile_image = data["user_profile_image"]
+    user_cover_image = data["user_cover_image"]
+    EventData.objects.create(user_name=user_name, user_profile_image=user_profile_image, user_cover_image=user_cover_image)
+    return HttpResponse("User successfully registered!")
